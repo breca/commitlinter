@@ -12,7 +12,8 @@ if [[ $commit_linecount -gt 1 ]]; then
     commit_second_lastline=$(echo "$commit_content" | tail -n 2 | head -n 1)
     commit_lastline=$(echo "$commit_content" | tail -n 1)
 fi
-conventional_commit_regex='^build(\(.+\))?:\s|^ci(\(.+\))?:\s|^docs(\(.+\))?:\s|^feat(\(.+\))?:\s|^fix(\(.+\))?:\s|^perf(\(.+\))?:\s|^refactor(\(.+\))?:\s|^style(\(.+\))?:\s|^test(\(.+\))?:\s|^chore(\(.+\))?:\s|^revert(\(.+\))?:\s'
+#conventional_commit_regex='^build(\(.+\))?:\s|^ci(\(.+\))?:\s|^docs(\(.+\))?:\s|^feat(\(.+\))?:\s|^fix(\(.+\))?:\s|^perf(\(.+\))?:\s|^refactor(\(.+\))?:\s|^style(\(.+\))?:\s|^test(\(.+\))?:\s|^chore(\(.+\))?:\s|^revert(\(.+\))?:\s'
+conventional_commit_regex='^(build|ci|docs|feat|fix|perf|refactor|style|test|chore|revert)(!)?(\(.+\))?:\s'
 
 # Strings
 help_firstline=$(cat << EOF
@@ -35,6 +36,8 @@ The first line of your commit should match the following pattern:
   refactor: A code change that neither fixes a bug nor adds a feature
   style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
   test: Adding missing tests or correcting existing tests\n
+
+
 EOF
 )
 
@@ -42,7 +45,17 @@ help_commitperiod='- Commit message should not end with a period.'
 help_commitcase='- Commit message should be lowercase.'
 help_longcommit='- Commit message should not be longer than 72 characters.'
 help_longbody='- Commit message body/footer should not be longer than 80 characters.'
-help_secondline="- The second line of a multi lined commit message should be blank, providing a spacer between the commit message and body."
+help_secondline=$(cat << EOF
+- The second line of a multi lined commit message should be blank, providing a spacer between the commit message and body.
+
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer]\n
+EOF
+)
+
 help_footerspacer="- The second last line of a multi lined commit message should be blank, providing a spacer between the commit message and footer."
 
 function fail_fast {
