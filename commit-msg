@@ -12,7 +12,6 @@ if [[ $commit_linecount -gt 1 ]]; then
     commit_second_lastline=$(echo "$commit_content" | tail -n 2 | head -n 1)
     commit_lastline=$(echo "$commit_content" | tail -n 1)
 fi
-#conventional_commit_regex='^build(\(.+\))?:\s|^ci(\(.+\))?:\s|^docs(\(.+\))?:\s|^feat(\(.+\))?:\s|^fix(\(.+\))?:\s|^perf(\(.+\))?:\s|^refactor(\(.+\))?:\s|^style(\(.+\))?:\s|^test(\(.+\))?:\s|^chore(\(.+\))?:\s|^revert(\(.+\))?:\s'
 conventional_commit_regex='^(build|ci|docs|feat|fix|perf|refactor|style|test|chore|revert)(!)?(\(.+\))?:\s'
 
 # Strings
@@ -37,6 +36,29 @@ The first line of your commit should match the following pattern:
   style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
   test: Adding missing tests or correcting existing tests\n
 
+Examples:
+# Commit message with no body
+docs: correct spelling of CHANGELOG
+
+# Commit message with scope
+feat(lang): add Polish language
+
+# Commit message with description and breaking change footer
+feat: allow provided config object to extend other configs
+
+BREAKING CHANGE: `extends` key in config file is now used for extending other config files
+
+# Commit message with ! to draw attention to breaking change
+feat!: send an email to the customer when a product is shipped
+
+# Commit message with scope and ! to draw attention to breaking change
+feat(api)!: send an email to the customer when a product is shipped
+
+# Commit message with both ! and BREAKING CHANGE footer
+chore!: drop support for Node 6
+
+# Commit message with both ! and BREAKING CHANGE footer
+BREAKING CHANGE: use JavaScript features not available in Node 6.
 
 EOF
 )
@@ -45,6 +67,7 @@ help_commitperiod='- Commit message should not end with a period.'
 help_commitcase='- Commit message should be lowercase.'
 help_longcommit='- Commit message should not be longer than 72 characters.'
 help_longbody='- Commit message body/footer should not be longer than 80 characters.'
+# Multiple footers are not supported at this time :/
 help_secondline=$(cat << EOF
 - The second line of a multi lined commit message should be blank, providing a spacer between the commit message and body.
 
