@@ -1,7 +1,11 @@
+#!/bin/bash
 # Ensure commit message matches conventional commit ...conventions
 
+# Unset this and this script will straight up flip a table if it thinks your commit message sucks
+permissive_mode=1
+
 # Variable munging
-commit_content=$(cat $1)
+commit_content=$(grep -v '\#' $1)
 commit_linecount=$(echo "$commit_content" | wc -l)
 commit_firstline=$(echo "$commit_content" | awk 'NR==1')
 commit_firstline_len=$(echo "$commit_firstline" | wc -m)
@@ -46,7 +50,7 @@ feat(lang): add Polish language
 # Commit message with description and breaking change footer
 feat: allow provided config object to extend other configs
 
-BREAKING CHANGE: `extends` key in config file is now used for extending other config files
+BREAKING CHANGE: extends key in config file is now used for extending other config files
 
 # Commit message with ! to draw attention to breaking change
 feat!: send an email to the customer when a product is shipped
@@ -112,10 +116,24 @@ if [[ -n $multiline ]]; then
 fi
 
 if [[ ${#failures[@]} > 0 ]]; then
-    echo -e "COMMIT REJECTED - supplied commit message does not meet convention.\n###################################################################"
+    if [[ -n $permissive_mode ]]; then
+        echo -e "WARNING - supplied commit message may not meet convention.\n###################################################################"
+    else
+        echo -e "COMMIT REJECTED - supplied commit message does not meet convention.\n###################################################################"
+    fi
     for fail in "${failures[@]}"; do
         fail_fast $fail
     done
-    exit 1
+    if [[ -n $permissive_mode ]]; then
+        echo
+        read -p '(c)ontinue anyway, (e)dit or any other key to abort.' choice
+        case $choice in 
+            [Cc]) exit 0 ;;
+            [Ee]) git commit --amend ;;
+            *) exit 1 ;;
+        esac
+    else
+        exit 1
+    fi
 fi
 
