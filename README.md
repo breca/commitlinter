@@ -6,5 +6,5 @@ See the spec [here](https://github.com/conventional-commits/conventionalcommits.
 
 To enable, copy `commit-msg` to `.git/hooks/` under your favorite git repo -- or if you're brave and want to use this globally, copy the script to your system git templates directory and future inits/clones will ensure it's present.
 
-sudo sh -c 'cp commit-msg /usr/share/git-core/templates/hooks/ && chmod 0755 /usr/share/git-core/templates/hooks/commit-msg'
+`sudo sh -c 'cp commit-msg /usr/share/git-core/templates/hooks/ && chmod 0755 /usr/share/git-core/templates/hooks/commit-msg'`
 
