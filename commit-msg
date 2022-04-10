@@ -85,7 +85,7 @@ EOF
 
 help_footerspacer="- The second last line of a multi lined commit message should be blank, providing a spacer between the commit message and footer."
 
-function fail_fast {
+function fail_msg {
     case $1 in
         firstline) echo -e "$help_firstline" ;;
         commitperiod) echo -e "$help_commitperiod" ;;
@@ -116,20 +116,22 @@ if [[ -n $multiline ]]; then
 fi
 
 if [[ ${#failures[@]} > 0 ]]; then
-    if [[ -n $permissive_mode ]]; then
+    if [[ -n "$permissive_mode" ]]; then
         echo -e "WARNING - supplied commit message may not meet convention.\n###################################################################"
     else
         echo -e "COMMIT REJECTED - supplied commit message does not meet convention.\n###################################################################"
     fi
     for fail in "${failures[@]}"; do
-        fail_fast $fail
+        fail_msg $fail
     done
-    if [[ -n $permissive_mode ]]; then
+    if [[ -n "$permissive_mode" ]]; then
+        echo -e "\n-------------------------------------------"
+        exec </dev/tty
+        read -n 1 -p "(c)ontinue anyway, any other key to abort..." choice
         echo
-        read -p '(c)ontinue anyway, (e)dit or any other key to abort.' choice
+        exec <&-
         case $choice in 
             [Cc]) exit 0 ;;
-            [Ee]) git commit --amend ;;
             *) exit 1 ;;
         esac
     else
