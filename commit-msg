@@ -10,6 +10,7 @@ commit_linecount=$(echo "$commit_content" | wc -l)
 commit_firstline=$(echo "$commit_content" | awk 'NR==1')
 commit_firstline_len=$(echo "$commit_firstline" | wc -m)
 commit_firstline_end=$(echo "$commit_firstline" | awk '{print substr($0,length($0),1)}')
+commit_firstline_case=$(grep [[:upper:]] $commit_firstline &>/dev/null) # || 'foo')
 if [[ $commit_linecount -gt 1 ]]; then
     multiline=1
     commit_secondline=$(echo "$commit_content" | awk 'NR==2')
@@ -102,6 +103,7 @@ declare -a failures
 grep -E "${conventional_commit_regex}" $1 &>/dev/null || failures+=('firstline')
 [[ $commit_firstline_end != '.' ]] || failures+=('commitperiod')
 (( $commit_firstline_len < 73 )) || failures+=('longcommit')
+[[ -n $commit_firstline_case ]] || failues+=('commitcase')
 if [[ -n $multiline ]]; then
     commit_secondline=$(echo "$commit_content" | awk 'NR==2')
     [[ -n $commit_secondline ]] && failures+=('secondline')
